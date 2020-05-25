@@ -1,2 +1,3 @@
-../server_progs.dat
+../ssprogs.dat
 server_defs.qc
+main.qc

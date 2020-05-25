@@ -1,2 +1,3 @@
-../client_progs.dat
+../csprogs.dat
 client_defs.qc
+main.qc
