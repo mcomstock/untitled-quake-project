@@ -1,18 +1,6 @@
 /*
- * Contains functions that the Quake engine expects to exist.
+ * Contains functions that handle the state of the world.
  */
-
-/*
- * Called for the player every frame before physics are run.
- */
-void() PlayerPreThink = {
-};
-
-/*
- * Called for the player every frame after physics are run.
- */
-void() PlayerPostThink = {
-};
 
 /*
  * Called for every player when a new player connects or a new level starts. Typically used to

@@ -1,3 +1,4 @@
 ../ssprogs.dat
 server_defs.qc
-main.qc
+world.qc
+player.qc
