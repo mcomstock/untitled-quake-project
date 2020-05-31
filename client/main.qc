@@ -116,8 +116,6 @@ void(float width, float height, float menushown) CSQC_UpdateView = {
     /* drawfill('0 0 0', [width, height, 0], '1 1 0', 1, 0); */
     /* drawstring('0 0 0', "Hello, World", '8 8 0', '0 0 1', 1, 0); */
 
-    print("CSQC_UpdateView started\n");
-
     // Reset the view properties to their default values. Note that the default values do not draw a
     // HUD.
     clearscene();
@@ -179,12 +177,14 @@ void(vector viewsize, float scoresshown) CSQC_DrawScores = {
  * Gives the CSQC a chance to intercept stuffcmds. Use the tokenize builtin to parse the
  * message. Unrecognised commands would normally be localcmded, but its probably better to drop
  * unrecognised stuffcmds completely.
+ *
+ * NOTE: UNCOMMENTING THIS SEEMS TO PREVENT THE WORLD FROM LOADING!
  */
-void(string msg) CSQC_Parse_StuffCmd = {
-    print("CSQC_Parse_StuffCmd: ");
-    print(msg);
-    print("\n");
-};
+/* void(string msg) CSQC_Parse_StuffCmd = { */
+/*     print("CSQC_Parse_StuffCmd: "); */
+/*     print(msg); */
+/*     print("\n"); */
+/* }; */
 
 /*
  * Gives the CSQC a chance to intercept centerprints. Return true if you wish the engine to
@@ -229,6 +229,7 @@ void() CSQC_Parse_Event = {
  */
 float(float evtype, float scanx, float chary, float devid) CSQC_InputEvent = {
     /* print("CSQC_IntputEvent started\n"); */
+
     return FALSE;
 };
 
@@ -237,9 +238,10 @@ float(float evtype, float scanx, float chary, float devid) CSQC_InputEvent = {
  * order to apply your own player inputs within csqc, which may allow you a convienient way to pass
  * certain info to ssqc.
  */
-__used void() CSQC_Input_Frame = {
-    /* print("CSQC_Intput_Frame started\n"); */
-};
+/* __used void() CSQC_Input_Frame = { */
+/*     /\* print("CSQC_Intput_Frame started\n"); *\/ */
+/*     /\* runstandardplayerphysics(self); *\/ */
+/* }; */
 
 /*
  * Called by the engine after the video was restarted. This serves to notify the CSQC that any
@@ -330,3 +332,7 @@ void(float prevprogs) init = {
  */
 /* void() initents = { */
 /* }; */
+
+void(float isnew) Player_Refresh = {
+    print("Player_Refresh called\n");
+};

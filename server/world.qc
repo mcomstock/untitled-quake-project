@@ -32,6 +32,25 @@ void() ClientKill = {
  * According to the QuakeC reference, this is called after setting parm1 - parm16.
  */
 void() PutClientInServer = {
+    print("PutClientInServer called\n");
+
+    local entity spawnpoint;
+    spawnpoint = find(world, classname, "info_player_start");
+
+    self.classname = "player";
+    self.solid = SOLID_SLIDEBOX;
+    setmodel(self, "progs/player.mdl");
+    self.movetype = MOVETYPE_WALK;
+    self.health = self.max_health = 100;
+    self.takedamage = DAMAGE_AIM;
+    self.flags = FL_CLIENT;
+
+    self.origin = spawnpoint.origin + [0, 0, 1];
+    self.angles = spawnpoint.angles;
+    self.fixangle = TRUE;
+    setsize(self, [-16, -16, -24], [16, 16, 32]);
+    self.view_ofs = '0 0 22';
+    self.velocity = '0 0 0';
 };
 
 /*
@@ -51,12 +70,14 @@ void() SetNewParms = {
  * Handle the server starting or loading a map.
  */
 void() main = {
+    print("main called\n");
 };
 
 /*
  * Called before each frame is run.
  */
 void() StartFrame = {
+    deathmatch = cvar("deathmatch");
 };
 
 /*
@@ -64,4 +85,7 @@ void() StartFrame = {
  * will be needed that aren't already defined as a base Quake asset.
  */
 void() worldspawn = {
+    print("worldspawn called\n");
+
+    precache_model("progs/player.mdl");
 };
