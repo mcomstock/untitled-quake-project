@@ -7,9 +7,9 @@
  * announce the new player to every other player.
  */
 void(optional float csqcactive) ClientConnect = {
-    bprint("Please welcome ");
-    bprint(self.netname);
-    bprint(" to the game!\n");
+    bprint(PRINT_HIGH, "Please welcome ");
+    bprint(PRINT_HIGH, self.netname);
+    bprint(PRINT_HIGH, " to the game!\n");
 };
 
 /*
@@ -17,9 +17,9 @@ void(optional float csqcactive) ClientConnect = {
  * the player has left the game.
  */
 void() ClientDisconnect = {
-    bprint("Please bid ");
-    bprint(self.netname);
-    bprint(" farewell!\n");
+    bprint(PRINT_HIGH, "Please bid ");
+    bprint(PRINT_HIGH, self.netname);
+    bprint(PRINT_HIGH, " farewell!\n");
 };
 
 /*
@@ -77,7 +77,7 @@ void() main = {
  * Called before each frame is run.
  */
 void() StartFrame = {
-    deathmatch = cvar("deathmatch");
+    /* deathmatch = cvar("deathmatch"); */
 };
 
 /*

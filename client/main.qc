@@ -230,6 +230,30 @@ void() CSQC_Parse_Event = {
 float(float evtype, float scanx, float chary, float devid) CSQC_InputEvent = {
     /* print("CSQC_IntputEvent started\n"); */
 
+    if (evtype == IE_KEYDOWN) {
+        local string keybind = getkeybind(scanx);
+
+        print("keybind: ");
+        print(keybind);
+        print("\n");
+
+        if (keybind == "+forward") {
+            // Set v_forward, v_up, v_right
+            /* makevectors(getviewprop(VF_ANGLES)); */
+
+            /* input_movevalues = v_right * 10; */
+        }
+    }
+
+    if (evtype == IE_KEYUP) {
+        local string keybind = getkeybind(scanx);
+
+        if (keybind == "+forward") {
+            /* input_movevalues = '0 0 0'; */
+        }
+    }
+
+    /* return TRUE; */
     return FALSE;
 };
 
@@ -238,10 +262,10 @@ float(float evtype, float scanx, float chary, float devid) CSQC_InputEvent = {
  * order to apply your own player inputs within csqc, which may allow you a convienient way to pass
  * certain info to ssqc.
  */
-/* __used void() CSQC_Input_Frame = { */
-/*     /\* print("CSQC_Intput_Frame started\n"); *\/ */
-/*     /\* runstandardplayerphysics(self); *\/ */
-/* }; */
+void() CSQC_Input_Frame = {
+    /* print("CSQC_Intput_Frame started\n"); */
+    /* runstandardplayerphysics(self); */
+};
 
 /*
  * Called by the engine after the video was restarted. This serves to notify the CSQC that any

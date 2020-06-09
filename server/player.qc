@@ -6,6 +6,7 @@
  * Called for the player every frame before physics are run.
  */
 void() PlayerPreThink = {
+    /* self.velocity = '0 100 0'; */
 };
 
 /*
@@ -65,11 +66,33 @@ void(string cmd) SV_ParseClientCommand = {
  * within the input packet. The contents of this function should be somewaht identical to the
  * equivelent function in CSQC, or prediction misses will occur. If you're feeling lazy, you can
  * simply call 'runstandardplayerphysics' after modifying the inputs.
+ *
+ * This only works when using the QuakeWorld defs.
  */
 void() SV_RunClientCommand = {
     print("SV_RunClientCommand called\n");
 
-    runstandardplayerphysics(self);
+    print("input_timelength: ");
+    print(ftos(input_timelength));
+    print("\n");
+
+    print("input_angles: ");
+    print(vtos(input_angles));
+    print("\n");
+
+    print("input_movevalues: ");
+    print(vtos(input_movevalues));
+    print("\n");
+
+    print("input_buttons: ");
+    print(ftos(input_buttons));
+    print("\n");
+
+    print("input_impulse: ");
+    print(ftos(input_impulse));
+    print("\n");
+
+    /* runstandardplayerphysics(self); */
 };
 
 /*
@@ -89,14 +112,15 @@ void() SV_RunClientCommand = {
  * even useful.
  */
 /* void() SV_PlayerPhysics = { */
+/*     print("SV_PlayerPhysics called\n"); */
 /* }; */
 
 /*
  * Called after non-player entities have been run at the end of the physics frame. Player physics is
  * performed out of order and can/will still occur between EndFrame and BeginFrame.
  */
-void() EndFrame = {
-};
+/* void() EndFrame = { */
+/* }; */
 
 void() PlayerSpawn = {
     print("PlayerSpawn called\n");
