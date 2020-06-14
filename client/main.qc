@@ -2,56 +2,11 @@
  * Contains functions that the Quake endine expects to exist.
  */
 
-float() AnimateSomeLameModel = {
-    local float first_frame = 0;
-    local float num_frames = 6;
-
-    // Animate at 10 FPS.
-    self.lerpfrac -= frametime * 10;
-
-    // Protect against sudden low framerates.
-    while (self.lerpfrac < 0) {
-        self.frame2 = self.frame;
-        self.frame += 1;
-
-        // Restart the animation when it completes.
-        if (self.frame >= first_frame + num_frames) {
-            self.frame = first_frame;
-        }
-
-        // Go to the start of the frame.
-        self.lerpfrac += 1;
-    }
-
-    // Set v_forward and others.
-    makevectors(getviewprop(VF_ANGLES));
-    // Read the current view origin.
-    vector vieworg = getviewprop(VF_ORIGIN);
-    // Reposition the entity to 128 units in front of the view.
-    setorigin(self, vieworg + v_forward * 128);
-
-    return FALSE;
-};
-
 /*
  * Called at startup. enginename and engineversion are arbitary hints and can take any
  * form. enginename should be consistant between revisions, but this cannot truely be relied upon.
  */
 void(float apiver, string enginename, float enginever) CSQC_Init = {
-    // Note that the arguments are engine-defined and may not be the same for other engines.
-
-    print("CSQC_Init started\n");
-
-    local entity foo = spawn();
-    // Add an example animation.
-    foo.predraw = AnimateSomeLameModel;
-    precache_model("progs/player.mdl");
-    setmodel(foo, "progs/player.mdl");
-    // TODO: Make sure this location is actually in the world.
-    setorigin(foo, '0 0 0');
-
-    // Make sure the entity is drawn automatically by the builtins.
-    foo.drawmask = MASK_ENGINE;
 };
 
 void(vector pos, float value, float threshold) Hud_DrawLargeValue = {
