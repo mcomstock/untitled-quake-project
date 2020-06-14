@@ -90,28 +90,56 @@ void() SV_RunClientCommand = {
     local float old_speed = vlen(old_velocity);
     local float p_maxspeed = self.maxspeed;
 
+    // Check if the player is in the air.
+    local float in_air = FALSE;
+    // It counts if the player is just starting to move up.
+    if (self.velocity_z > 0) {
+        in_air = TRUE;
+    } else {
+        tracebox(self.origin, self.mins, self.maxs, self.origin - '0 0 1', FALSE, self);
+        // In the air if there is nothing below, or the surface below is angled too steeply.
+        in_air = (trace_fraction == 1 || trace_plane_normal_z < 0.7);
+    }
+
     // How quickly to slow down when movement is stopped.
     local float braking = 5;
     // How quickly to speed up when movement is applied.
     local float acceleration = 10;
     // The height a player can step up without jumping.
     local float step_height = 22;
+    // How quickly to fall due to gravity.
+    local float gravity = 500;
+    // The initial jump speed.
+    local float jump_speed = 300;
 
-    // Apply the brakes. Always do this so that direction changes take over more quickly.
-    local float new_speed = max(old_speed - braking, 0);
-    new_velocity = normalize(old_velocity) * new_speed;
+    if (in_air) {
+        new_velocity = old_velocity;
+        new_velocity_z -= gravity * input_timelength;
+    } else {
+        // Apply the brakes. Always do this so that direction changes take over more quickly.
+        local float new_speed = max(old_speed - braking, 0);
+        new_velocity = normalize(old_velocity) * new_speed;
 
-    // Apply acceleration due to any movement.
-    new_velocity += acceleration * input_timelength * intended_direction;
+        // Stop falling.
+        new_velocity_z = 0;
 
-    // Do not exceed the maximum speed.
-    if (vlen(new_velocity) > p_maxspeed) {
-        new_velocity = p_maxspeed * normalize(new_velocity);
-    }
+        // Apply acceleration due to any movement.
+        new_velocity += acceleration * input_timelength * intended_direction;
 
-    // Just stop if the speed is too low.
-    if (vlen(new_velocity) < 1) {
-        new_velocity = '0 0 0';
+        // Do not exceed the maximum speed.
+        if (vlen(new_velocity) > p_maxspeed) {
+            new_velocity = p_maxspeed * normalize(new_velocity);
+        }
+
+        // Just stop if the speed is too low.
+        if (vlen(new_velocity) < 1) {
+            new_velocity = '0 0 0';
+        }
+
+        // Jump if the player is on the ground and jump is pressed.
+        if (input_buttons & 2) {
+            new_velocity_z += jump_speed;
+        }
     }
 
     self.velocity = new_velocity;
@@ -129,7 +157,7 @@ void() SV_RunClientCommand = {
         // Update the amount of time left.
         remaining_time -= remaining_time * trace_fraction;
 
-        // Handle collision. Only handle it once, to avoid getting stuck in some crazy situation.
+        // Handle collision. Only handle it once to avoid getting stuck in some crazy situation.
         if (remaining_time > 0) {
             // Try to step up, if possible.
             if (remaining_step) {
@@ -173,12 +201,6 @@ void() SV_RunClientCommand = {
             touchtriggers();
         }
     }
-
-
-    // TODO
-    // * Falling
-    // * Jumping
-    // * Air control
 };
 
 /*
