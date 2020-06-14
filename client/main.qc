@@ -192,6 +192,8 @@ void(vector viewsize, float scoresshown) CSQC_DrawScores = {
  */
 float(string msg) CSQC_Parse_CenterPrint = {
     print("CSQC_Parse_CenterPrint started\n");
+
+    return FALSE;
 };
 
 /*
@@ -203,6 +205,8 @@ float(string msg) CSQC_Parse_CenterPrint = {
  */
 float(float save, float take, vector inflictororg) CSQC_Parse_Damage = {
     print("CSQC_Parse_Damage started\n");
+
+    return FALSE;
 };
 
 /*
@@ -228,32 +232,6 @@ void() CSQC_Parse_Event = {
  * have both scan and unichar values set at the same time.
  */
 float(float evtype, float scanx, float chary, float devid) CSQC_InputEvent = {
-    /* print("CSQC_IntputEvent started\n"); */
-
-    if (evtype == IE_KEYDOWN) {
-        local string keybind = getkeybind(scanx);
-
-        print("keybind: ");
-        print(keybind);
-        print("\n");
-
-        if (keybind == "+forward") {
-            // Set v_forward, v_up, v_right
-            /* makevectors(getviewprop(VF_ANGLES)); */
-
-            /* input_movevalues = v_right * 10; */
-        }
-    }
-
-    if (evtype == IE_KEYUP) {
-        local string keybind = getkeybind(scanx);
-
-        if (keybind == "+forward") {
-            /* input_movevalues = '0 0 0'; */
-        }
-    }
-
-    /* return TRUE; */
     return FALSE;
 };
 

@@ -70,29 +70,115 @@ void(string cmd) SV_ParseClientCommand = {
  * This only works when using the QuakeWorld defs.
  */
 void() SV_RunClientCommand = {
-    print("SV_RunClientCommand called\n");
+    // input_buttons: seems to be that 1 is attack and 2 is jump.
 
-    print("input_timelength: ");
-    print(ftos(input_timelength));
-    print("\n");
+    makevectors(input_angles);
 
-    print("input_angles: ");
-    print(vtos(input_angles));
-    print("\n");
+    local vector h_forward = v_forward;
+    h_forward_z = 0;
+    h_forward = normalize(h_forward);
 
-    print("input_movevalues: ");
-    print(vtos(input_movevalues));
-    print("\n");
+    local vector h_right = v_right;
+    h_right_z = 0;
+    h_right = normalize(h_right);
 
-    print("input_buttons: ");
-    print(ftos(input_buttons));
-    print("\n");
+    local vector intended_direction = h_forward * input_movevalues_x + h_right * input_movevalues_y;
 
-    print("input_impulse: ");
-    print(ftos(input_impulse));
-    print("\n");
+    local vector new_velocity;
+    local vector old_velocity = self.velocity;
 
-    /* runstandardplayerphysics(self); */
+    local float old_speed = vlen(old_velocity);
+    local float p_maxspeed = self.maxspeed;
+
+    // How quickly to slow down when movement is stopped.
+    local float braking = 5;
+    // How quickly to speed up when movement is applied.
+    local float acceleration = 10;
+    // The height a player can step up without jumping.
+    local float step_height = 22;
+
+    // Apply the brakes. Always do this so that direction changes take over more quickly.
+    local float new_speed = max(old_speed - braking, 0);
+    new_velocity = normalize(old_velocity) * new_speed;
+
+    // Apply acceleration due to any movement.
+    new_velocity += acceleration * input_timelength * intended_direction;
+
+    // Do not exceed the maximum speed.
+    if (vlen(new_velocity) > p_maxspeed) {
+        new_velocity = p_maxspeed * normalize(new_velocity);
+    }
+
+    // Just stop if the speed is too low.
+    if (vlen(new_velocity) < 1) {
+        new_velocity = '0 0 0';
+    }
+
+    self.velocity = new_velocity;
+
+    // Update the player's position, handling collision up to three times.
+    local float remaining_attempts;
+    local float remaining_time = input_timelength;
+    local float remaining_step = TRUE;
+    for (remaining_attempts = 3; remaining_time > 0 && remaining_attempts > 0; remaining_attempts--) {
+        // Update the self position based on the current velocity.
+        local vector destination = self.origin + self.velocity * remaining_time;
+        tracebox(self.origin, self.mins, self.maxs, destination, FALSE, self);
+        self.origin = trace_endpos;
+
+        // Update the amount of time left.
+        remaining_time -= remaining_time * trace_fraction;
+
+        // Handle collision. Only handle it once, to avoid getting stuck in some crazy situation.
+        if (remaining_time > 0) {
+            // Try to step up, if possible.
+            if (remaining_step) {
+                // Attempt to go up in preparation for the step.
+                local vector step_up_destination = self.origin;
+                step_up_destination_z += step_height;
+                tracebox(self.origin, self.mins, self.maxs, step_up_destination, FALSE, self);
+
+                // Attempt to go forward at the new height.
+                local vector step_forward_destination = trace_endpos + self.velocity * remaining_time;
+                // Make sure the destination has the correct height in case of vertical velocity.
+                step_forward_destination_z = trace_endpos_z;
+                tracebox(trace_endpos, self.mins, self.maxs, step_forward_destination, FALSE, self);
+
+                local float step_forward_fraction = trace_fraction;
+
+                // If the step was successful, update the position.
+                if (trace_fraction > 0) {
+                    // TODO maybe handle collisions that happen here.
+
+                    // Move back down until the ground or starting height was reached.
+                    local vector step_down_destination = trace_endpos;
+                    step_down_destination_z -= step_height;
+                    tracebox(trace_endpos, self.mins, self.maxs, step_down_destination, FALSE, self);
+                    self.origin = trace_endpos;
+
+                    // Only count the forward movement time.
+                    remaining_time -= remaining_time * step_forward_fraction;
+
+                    // Don't allow multiple steps in a single movement update.
+                    remaining_step = FALSE;
+
+                    continue;
+                }
+            }
+
+            // Use the formula for vector reflection.
+            self.velocity = self.velocity - 2 * (self.velocity * trace_plane_normal) * trace_plane_normal;
+
+            // Apply collision effects.
+            touchtriggers();
+        }
+    }
+
+
+    // TODO
+    // * Falling
+    // * Jumping
+    // * Air control
 };
 
 /*

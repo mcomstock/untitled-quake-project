@@ -44,6 +44,7 @@ void() PutClientInServer = {
     self.health = self.max_health = 100;
     self.takedamage = DAMAGE_AIM;
     self.flags = FL_CLIENT;
+    self.maxspeed = 320;
 
     self.origin = spawnpoint.origin + [0, 0, 1];
     self.angles = spawnpoint.angles;
