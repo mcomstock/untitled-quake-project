@@ -2,17 +2,19 @@
  * Contains functions that handle the state of the player.
  */
 
+void() W_WeaponFrame;
+
 /*
  * Called for the player every frame before physics are run.
  */
 void() PlayerPreThink = {
-    /* self.velocity = '0 100 0'; */
 };
 
 /*
  * Called for the player every frame after physics are run.
  */
 void() PlayerPostThink = {
+    W_WeaponFrame();
 };
 
 /*

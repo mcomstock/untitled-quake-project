@@ -1,4 +1,6 @@
 ../progs.dat
 server_defs.qc
+../shared/globals.qc
 world.qc
 player.qc
+weapons.qc

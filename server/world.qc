@@ -2,6 +2,8 @@
  * Contains functions that handle the state of the world.
  */
 
+void() W_Precache;
+
 /*
  * Called for every player when a new player connects or a new level starts. Typically used to
  * announce the new player to every other player.
@@ -52,6 +54,9 @@ void() PutClientInServer = {
     setsize(self, [-16, -16, -24], [16, 16, 32]);
     self.view_ofs = '0 0 22';
     self.velocity = '0 0 0';
+
+    self.ammo_throwing_knife = 10;
+    self.attack_finished = time;
 };
 
 /*
@@ -89,4 +94,6 @@ void() worldspawn = {
     print("worldspawn called\n");
 
     precache_model("progs/player.mdl");
+
+    W_Precache();
 };

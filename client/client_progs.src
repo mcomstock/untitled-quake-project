@@ -1,3 +1,4 @@
 ../csprogs.dat
 client_defs.qc
+../shared/globals.qc
 main.qc
