@@ -56,6 +56,8 @@ void() PutClientInServer = {
     self.velocity = '0 0 0';
 
     self.ammo_throwing_knife = 10;
+    self.ammo_arrow = 10;
+    self.ammo_spear = 10;
     self.attack_finished = time;
 };
 
